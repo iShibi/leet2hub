@@ -1,0 +1,30 @@
+{
+	"name": "leet2hub",
+	"version": "0.1.0",
+	"private": true,
+	"description": "A browser extension that uploads LeetCode submissions to GitHub.",
+	"author": {
+		"name": "Shubham Parihar",
+		"email": "shubhamparihar391@gmail.com",
+		"url": "https://github.com/iShibi"
+	},
+	"scripts": {
+		"clean-dist": "zx ./scripts/delete.mjs",
+		"compile-src": "tsc",
+		"copy-static": "zx ./scripts/copy.mjs",
+		"build": "npm run clean-dist && npm run compile-src && npm run copy-static"
+	},
+	"devDependencies": {
+		"@eslint/js": "^9.10.0",
+		"@types/chrome": "^0.0.270",
+		"eslint": "^9.10.0",
+		"eslint-config-prettier": "^9.1.0",
+		"globals": "^15.9.0",
+		"prettier": "3.3.3",
+		"typescript": "^5.5.4",
+		"typescript-eslint": "^8.4.0",
+		"zx": "^8.1.5"
+	},
+	"type": "module",
+	"license": "MIT"
+}

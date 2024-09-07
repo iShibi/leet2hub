@@ -1,0 +1,29 @@
+{
+	"editor.quickSuggestions": {
+		"strings": true
+	},
+	// "typescript.preferences.quoteStyle": "single",
+	"javascript.preferences.quoteStyle": "single",
+	"files.eol": "\n",
+	"editor.tabSize": 2,
+	"editor.insertSpaces": false,
+	"editor.detectIndentation": false,
+	"files.insertFinalNewline": true,
+	"editor.codeActionsOnSave": {
+		"source.fixAll": "always",
+		"source.organizeImports": "always"
+	},
+	"editor.formatOnSave": true,
+	"typescript.tsdk": "node_modules\\typescript\\lib",
+	"typescript.enablePromptUseWorkspaceTsdk": true,
+	"[typescript]": {
+		"editor.defaultFormatter": "esbenp.prettier-vscode"
+	},
+	"json.schemas": [
+		{
+			"fileMatch": ["manifest.json"],
+			"url": "https://json.schemastore.org/chrome-manifest.json"
+		}
+	],
+	"eslint.useFlatConfig": true
+}

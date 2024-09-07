@@ -1,0 +1,21 @@
+{
+	"manifest_version": 3,
+	"name": "leet2hub",
+	"version": "0.1.0",
+	"action": {
+		"default_popup": "popup.html"
+	},
+	"options_page": "options.html",
+	"permissions": ["webRequest", "webRequestBlocking", "storage", "tabs"],
+	"host_permissions": ["https://leetcode.com/*"],
+	"background": {
+		"service_worker": "ServiceWorker.js",
+		"type": "module"
+	},
+	"content_scripts": [
+		{
+			"js": ["Content.js"],
+			"matches": ["https://leetcode.com/*"]
+		}
+	]
+}
