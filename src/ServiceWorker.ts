@@ -5,6 +5,14 @@ async function getGitHubPAT() {
 	return githubPAT;
 }
 
+async function getGithubRepoDetails() {
+	const { githubRepo } = await chrome.storage.local.get('githubRepo');
+	if (typeof githubRepo !== 'string') throw Error('No GitHub Repo Found');
+	// https://github.com/iShibi/leet2hub --> ['', 'iShibi', 'leet2hub']
+	const [_, githubRepoOwner, githubRepoName] = new URL(githubRepo).pathname.split('/');
+	return { githubRepoOwner, githubRepoName };
+}
+
 interface MutationEventMsg {
 	action: 'accepted';
 }
@@ -47,8 +55,7 @@ chrome.webRequest.onBeforeRequest.addListener(
 				chrome.storage.local.set({ submission });
 			}
 		} else if (details.method === 'GET' && details.url.includes('/check')) {
-			// https://leetcode.com/submissions/detail/1234/check/
-			// ['', 'submissions', 'detail', '1234', 'check', '']
+			// https://leetcode.com/submissions/detail/123/check/ --> ['', 'submissions', 'detail', '123', 'check', '']
 			const submissionId = new URL(details.url).pathname.split('/')[3];
 			chrome.storage.local.set({ submissionId });
 		}
@@ -58,9 +65,13 @@ chrome.webRequest.onBeforeRequest.addListener(
 	['requestBody'], // Needed to access and modify the request body
 );
 
-async function getShaOfExistingFile(filePath: string) {
-	const accessToken = await getGitHubPAT();
-	const url = `https://api.github.com/repos/iShibi/test_github_api/contents/${filePath}`;
+async function getShaOfExistingFile(
+	githubRepoOwner: string,
+	githubRepoName: string,
+	filePath: string,
+	accessToken: string,
+) {
+	const url = `https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/contents/${filePath}`;
 	const res = await fetch(url, {
 		method: 'GET',
 		headers: {
@@ -77,10 +88,6 @@ async function getShaOfExistingFile(filePath: string) {
 
 interface BodyParams {
 	message: string;
-	committer: {
-		name: string;
-		email: string;
-	};
 	content: string;
 	sha?: string;
 }
@@ -88,20 +95,17 @@ interface BodyParams {
 async function uploadToGitHub(lang: SuportedLang, problemName: string, typedCode: string) {
 	const body: BodyParams = {
 		message: `feat: add solution for ${problemName}`,
-		committer: {
-			name: 'Shubham Parihar',
-			email: 'shubhamparihar391@gmail.com',
-		},
 		content: btoa(typedCode),
 	};
 	const filePath = `${problemName}.${getLangExtension(lang)}`;
-	const sha = await getShaOfExistingFile(filePath);
+	const accessToken = await getGitHubPAT();
+	const { githubRepoOwner, githubRepoName } = await getGithubRepoDetails();
+	const sha = await getShaOfExistingFile(githubRepoOwner, githubRepoName, filePath, accessToken);
 	if (sha) {
 		body.sha = sha;
 		body.message = `feat: update solution for ${problemName}`;
 	}
-	const accessToken = await getGitHubPAT();
-	const url = `https://api.github.com/repos/iShibi/test_github_api/contents/${filePath}`;
+	const url = `https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/contents/${filePath}`;
 	const res = await fetch(url, {
 		method: 'PUT',
 		headers: {
@@ -128,8 +132,7 @@ async function getSubmissionIdFromTabUrl() {
 	const queryOptions = { active: true, lastFocusedWindow: true };
 	const [tab] = await chrome.tabs.query(queryOptions);
 	if (!tab.url) throw Error('Tab URL not found');
-	// https://leetcode.com/problems/two-sum/submissions/1234/
-	// ['', 'problems', 'two-sum', 'submissions', '123', '']
+	// https://leetcode.com/problems/two-sum/submissions/123/ --> ['', 'problems', 'two-sum', 'submissions', '123', '']
 	const submissionId = new URL(tab.url).pathname.split('/')[4];
 	return submissionId;
 }

@@ -8,7 +8,7 @@ const destinationDir = path.join(__dirname, '..', 'dist');
 
 await fs.mkdir(destinationDir, { recursive: true });
 
-const files = (await fs.readdir(sourceDir)).filter(file => !file.endsWith('.ts'));
+const files = (await fs.readdir(sourceDir)).filter(file => !file.endsWith('.ts') && file !== 'input.css');
 
 for (const file of files) {
 	const sourceFilePath = path.join(sourceDir, file);

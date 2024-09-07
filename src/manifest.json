@@ -2,11 +2,12 @@
 	"manifest_version": 3,
 	"name": "leet2hub",
 	"version": "0.1.0",
+	"description": "A browser extension that uploads LeetCode submissions to GitHub.",
 	"action": {
 		"default_popup": "popup.html"
 	},
 	"options_page": "options.html",
-	"permissions": ["webRequest", "webRequestBlocking", "storage", "tabs"],
+	"permissions": ["webRequest", "storage", "tabs"],
 	"host_permissions": ["https://leetcode.com/*"],
 	"background": {
 		"service_worker": "ServiceWorker.js",
