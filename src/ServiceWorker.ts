@@ -94,16 +94,16 @@ interface BodyParams {
 
 async function uploadToGitHub(lang: SuportedLang, problemName: string, typedCode: string) {
 	const body: BodyParams = {
-		message: `feat: add solution for ${problemName}`,
+		message: `feat: add ${lang} solution for ${problemName}`,
 		content: btoa(typedCode),
 	};
-	const filePath = `${problemName}.${getLangExtension(lang)}`;
+	const filePath = `${problemName}/${problemName}.${getLangExtension(lang)}`;
 	const accessToken = await getGitHubPAT();
 	const { githubRepoOwner, githubRepoName } = await getGithubRepoDetails();
 	const sha = await getShaOfExistingFile(githubRepoOwner, githubRepoName, filePath, accessToken);
 	if (sha) {
 		body.sha = sha;
-		body.message = `feat: update solution for ${problemName}`;
+		body.message = `feat: update ${lang} solution for ${problemName}`;
 	}
 	const url = `https://api.github.com/repos/${githubRepoOwner}/${githubRepoName}/contents/${filePath}`;
 	const res = await fetch(url, {
